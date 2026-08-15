@@ -1,116 +1,116 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>My Budget</title>
 <style>
-:root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#687386;--line:#e7ebf2;--accent:#315efb;--good:#16834b;--bad:#c43d4b;--shadow:0 8px 30px rgba(25,40,70,.07)}
-*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
-header{background:#fff;border-bottom:1px solid var(--line);padding:18px 22px;position:sticky;top:0;z-index:5}
-.header{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:15px}.brand{font-size:22px;font-weight:800}.month{display:flex;align-items:center;gap:8px}
-button,select,input{font:inherit}button{border:0;border-radius:10px;padding:10px 14px;cursor:pointer}.primary{background:var(--accent);color:#fff}.secondary{background:#eef2ff;color:#284bd0}.danger{background:#fff0f1;color:var(--bad)}
-main{max-width:1100px;margin:26px auto;padding:0 18px}.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:20px}.tab{background:#fff;border:1px solid var(--line);color:var(--muted)}.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}.label{color:var(--muted);font-size:13px}.value{font-size:25px;font-weight:800;margin-top:7px}.good{color:var(--good)}.bad{color:var(--bad)}
-.two{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-top:16px}.section-title{font-size:17px;font-weight:750;margin:0 0 14px}
-table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 6px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--muted);font-weight:600}
-.form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:13px;color:var(--muted)}input,select{border:1px solid var(--line);background:#fff;border-radius:9px;padding:10px;color:var(--text)}
-.row{display:flex;gap:9px;align-items:center}.space{justify-content:space-between}.empty{color:var(--muted);padding:15px 0}
-.progress{height:9px;background:#edf0f5;border-radius:99px;overflow:hidden;margin-top:9px}.bar{height:100%;background:var(--accent);border-radius:99px}
-.category{display:flex;justify-content:space-between;gap:12px;margin:12px 0}.small{font-size:12px;color:var(--muted)}
-.modal{position:fixed;inset:0;background:rgba(10,18,35,.45);display:none;align-items:center;justify-content:center;padding:18px;z-index:10}.modal.show{display:flex}.modal-box{background:#fff;border-radius:18px;padding:20px;width:min(520px,100%);box-shadow:0 20px 60px rgba(0,0,0,.2)}
-@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}@media(max-width:520px){.grid{grid-template-columns:1fr}.form{grid-template-columns:1fr}.header{align-items:flex-start;flex-direction:column}.month{width:100%;justify-content:space-between}}
+:root{--bg:#f4f6fa;--card:#fff;--ink:#172033;--muted:#69758a;--line:#e2e7ef;--blue:#315efb;--green:#16834b;--red:#c83d4c;--shadow:0 8px 28px rgba(20,35,65,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:16px}
+.head{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{font-weight:800;font-size:23px}
+main{max-width:1100px;margin:22px auto;padding:0 16px}.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:18px}.tab{background:#fff;border:1px solid var(--line);color:var(--muted);white-space:nowrap}.tab.active{background:var(--blue);color:white;border-color:var(--blue)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}.label{font-size:13px;color:var(--muted)}.big{font-size:26px;font-weight:800;margin-top:6px}.green{color:var(--green)}.red{color:var(--red)}
+.two{display:grid;grid-template-columns:1.2fr 1fr;gap:15px;margin-top:15px}.title{font-size:18px;font-weight:750;margin:0 0 14px}.row{display:flex;align-items:center;gap:9px}.between{justify-content:space-between}
+button{font:inherit;border:0;border-radius:9px;padding:10px 13px;cursor:pointer}.primary{background:var(--blue);color:#fff}.secondary{background:#eef2ff;color:#284bd0}.danger{background:#fff0f1;color:var(--red)}.edit{background:#edf1f7;color:#39465b}
+table{width:100%;border-collapse:collapse}th,td{padding:10px 5px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}th{color:var(--muted)}
+.progress{height:9px;background:#e9edf3;border-radius:99px;overflow:hidden}.bar{height:100%;background:var(--blue);border-radius:99px}.muted{color:var(--muted)}.empty{padding:15px 0;color:var(--muted)}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:13px;color:var(--muted)}input,select{padding:10px;border:1px solid var(--line);border-radius:9px;font:inherit;background:#fff;color:var(--ink)}
+.modal{position:fixed;inset:0;background:#0007;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal.show{display:flex}.box{background:#fff;width:min(560px,100%);border-radius:18px;padding:20px;max-height:90vh;overflow:auto}
+.notice{background:#eef5ff;border:1px solid #d9e5ff;border-radius:12px;padding:12px;margin-bottom:15px}.small{font-size:12px;color:var(--muted)}
+@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}}@media(max-width:520px){.grid{grid-template-columns:1fr}.form{grid-template-columns:1fr}.head{align-items:flex-start}.desktop{display:none}}
 </style>
 </head>
 <body>
-<header><div class="header"><div class="brand">💰 My Budget</div><div class="month"><button class="secondary" onclick="shiftMonth(-1)">←</button><strong id="monthLabel"></strong><button class="secondary" onclick="shiftMonth(1)">→</button></div></div></header>
+<header><div class="head"><div class="brand">💰 My Budget</div><div class="row"><button class="secondary" onclick="backup()">Export</button><button class="secondary" onclick="document.getElementById('importFile').click()">Import</button><input id="importFile" type="file" accept=".json" hidden onchange="restore(event)"></div></div></header>
 <main>
 <div class="tabs">
-<button class="tab active" data-tab="dashboard">Dashboard</button>
-<button class="tab" data-tab="transactions">Transactions</button>
-<button class="tab" data-tab="bills">Bills</button>
-<button class="tab" data-tab="budget">Budget</button>
-<button class="tab" data-tab="goals">Goals</button>
+<button class="tab active" data-page="dashboard">Dashboard</button><button class="tab" data-page="transactions">Transactions</button><button class="tab" data-page="bills">Bills</button><button class="tab" data-page="budget">Budget</button><button class="tab" data-page="goals">Goals</button><button class="tab" data-page="settings">Setup</button>
 </div>
 
 <section id="dashboard">
+<div class="notice"><b>Everything is editable.</b> Add your real income, expenses, bills and goals. Your dashboard recalculates automatically.</div>
 <div class="grid">
-<div class="card"><div class="label">Income</div><div class="value good" id="income">$0</div></div>
-<div class="card"><div class="label">Expenses</div><div class="value bad" id="expenses">$0</div></div>
-<div class="card"><div class="label">Saved / Invested</div><div class="value" id="saved">$0</div></div>
-<div class="card"><div class="label">Left over</div><div class="value" id="left">$0</div></div>
+<div class="card"><div class="label">Income</div><div class="big green" id="dIncome">$0</div></div>
+<div class="card"><div class="label">Expenses</div><div class="big red" id="dExpenses">$0</div></div>
+<div class="card"><div class="label">Savings / Investing</div><div class="big" id="dSaving">$0</div></div>
+<div class="card"><div class="label">Available</div><div class="big" id="dAvailable">$0</div></div>
 </div>
 <div class="two">
-<div class="card"><h3 class="section-title">Recent transactions</h3><div id="recent"></div></div>
-<div class="card"><h3 class="section-title">Spending by category</h3><div id="categories"></div></div>
+<div class="card"><h3 class="title">This month</h3><div id="summary"></div></div>
+<div class="card"><h3 class="title">Upcoming bills</h3><div id="upcoming"></div></div>
 </div>
 </section>
 
-<section id="transactions" hidden>
-<div class="card"><div class="row space"><h3 class="section-title">Transactions</h3><button class="primary" onclick="openModal('transaction')">+ Add transaction</button></div><div id="transactionTable"></div></div>
-</section>
-
-<section id="bills" hidden>
-<div class="card"><div class="row space"><h3 class="section-title">Recurring bills</h3><button class="primary" onclick="openModal('bill')">+ Add bill</button></div><div id="billTable"></div></div>
-</section>
-
-<section id="budget" hidden>
-<div class="card"><div class="row space"><h3 class="section-title">Monthly budget</h3><button class="primary" onclick="openModal('budget')">+ Set category</button></div><div id="budgetList"></div></div>
-</section>
-
-<section id="goals" hidden>
-<div class="card"><div class="row space"><h3 class="section-title">Savings goals</h3><button class="primary" onclick="openModal('goal')">+ Add goal</button></div><div id="goalList"></div></div>
-</section>
+<section id="transactions" hidden><div class="card"><div class="row between"><h3 class="title">Transactions</h3><button class="primary" onclick="openTransaction()">+ Add transaction</button></div><div id="tx"></div></div></section>
+<section id="bills" hidden><div class="card"><div class="row between"><h3 class="title">Recurring bills</h3><button class="primary" onclick="openBill()">+ Add bill</button></div><div id="billList"></div></div></section>
+<section id="budget" hidden><div class="card"><div class="row between"><h3 class="title">Monthly budget</h3><button class="primary" onclick="openBudget()">+ Add category</button></div><div id="budgetList"></div></div></section>
+<section id="goals" hidden><div class="card"><div class="row between"><h3 class="title">Goals</h3><button class="primary" onclick="openGoal()">+ Add goal</button></div><div id="goalList"></div></div></section>
+<section id="settings" hidden><div class="card"><h3 class="title">Budget setup</h3><div class="notice">These settings are optional. Your actual transactions control the dashboard totals.</div><form id="settingsForm" class="form"><div class="field"><label>Monthly target savings</label><input name="savingTarget" type="number" step=".01" min="0"></div><div class="field"><label>Emergency fund target</label><input name="emergencyTarget" type="number" step=".01" min="0"></div><div class="field full"><button class="primary">Save setup</button></div></form><hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><button class="danger" onclick="resetData()">Reset all app data</button></div></section>
 </main>
 
-<div class="modal" id="modal"><div class="modal-box"><div class="row space"><h3 id="modalTitle"></h3><button onclick="closeModal()">✕</button></div><form id="modalForm" class="form"></form></div></div>
+<div class="modal" id="modal"><div class="box"><div class="row between"><h3 class="title" id="modalTitle"></h3><button onclick="closeModal()">✕</button></div><form id="modalForm" class="form"></form></div></div>
 
 <script>
-const KEY='my-budget-v1';
-let state=JSON.parse(localStorage.getItem(KEY)||'null')||{
- transactions:[
-  {id:1,date:'2026-08-01',type:'income',category:'Paycheck',description:'Paycheck',amount:2600},
-  {id:2,date:'2026-08-02',type:'expense',category:'Housing',description:'Rent',amount:1200},
-  {id:3,date:'2026-08-04',type:'expense',category:'Groceries',description:'Groceries',amount:150},
-  {id:4,date:'2026-08-06',type:'expense',category:'Gas',description:'Gas',amount:55}
- ],
- bills:[{id:1,name:'Rent',amount:1200,due:1,category:'Housing'},{id:2,name:'Phone',amount:80,due:15,category:'Utilities'}],
- budgets:[{category:'Housing',limit:1200},{category:'Groceries',limit:500},{category:'Gas',limit:250},{category:'Entertainment',limit:200}],
- goals:[{id:1,name:'Emergency Fund',target:5000,current:1000},{id:2,name:'Investing',target:10000,current:2500}]
-};
-let viewDate=new Date(2026,7,1), modalType=null;
-
-function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
-function money(n){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n)}
-function monthKey(){return `${viewDate.getFullYear()}-${String(viewDate.getMonth()+1).padStart(2,'0')}`}
-function inMonth(t){return t.date.startsWith(monthKey())}
-function shiftMonth(n){viewDate.setMonth(viewDate.getMonth()+n);render()}
+const KEY="my-budget-v2";
+const fresh={transactions:[],bills:[],budgets:[],goals:[],settings:{savingTarget:0,emergencyTarget:0}};
+let s=JSON.parse(localStorage.getItem(KEY)||"null")||fresh, editing=null;
+const today=()=>new Date().toISOString().slice(0,10), month=()=>today().slice(0,7), money=n=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(n);
+const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+function save(){localStorage.setItem(KEY,JSON.stringify(s));render()}
+function closeModal(){document.getElementById("modal").classList.remove("show");editing=null}
+function openModal(title,html){document.getElementById("modalTitle").textContent=title;document.getElementById("modalForm").innerHTML=html;document.getElementById("modal").classList.add("show")}
+function openTransaction(id=null){
+ editing=id;let x=id?s.transactions.find(a=>a.id===id):{date:today(),type:"expense",description:"",category:"",amount:""};
+ openModal(id?"Edit transaction":"Add transaction",`<div class="field"><label>Date</label><input name="date" type="date" value="${x.date}" required></div><div class="field"><label>Type</label><select name="type"><option value="expense" ${x.type==="expense"?"selected":""}>Expense</option><option value="income" ${x.type==="income"?"selected":""}>Income</option><option value="saving" ${x.type==="saving"?"selected":""}>Saving / Investing</option></select></div><div class="field"><label>Description</label><input name="description" value="${esc(x.description)}" required></div><div class="field"><label>Category</label><input name="category" value="${esc(x.category)}" required></div><div class="field"><label>Amount</label><input name="amount" type="number" step=".01" min="0" value="${x.amount}" required></div><div class="field full"><button class="primary">Save transaction</button></div>`);
+}
+function openBill(id=null){
+ editing=id;let x=id?s.bills.find(a=>a.id===id):{name:"",amount:"",due:1,category:""};
+ openModal(id?"Edit bill":"Add recurring bill",`<div class="field"><label>Bill name</label><input name="name" value="${esc(x.name)}" required></div><div class="field"><label>Amount</label><input name="amount" type="number" step=".01" min="0" value="${x.amount}" required></div><div class="field"><label>Due day</label><input name="due" type="number" min="1" max="31" value="${x.due}" required></div><div class="field"><label>Category</label><input name="category" value="${esc(x.category)}" required></div><div class="field full"><button class="primary">Save bill</button></div>`);
+}
+function openBudget(id=null){
+ editing=id;let x=id?s.budgets.find(a=>a.id===id):{category:"",limit:""};
+ openModal(id?"Edit budget":"Add budget category",`<div class="field"><label>Category</label><input name="category" value="${esc(x.category)}" required></div><div class="field"><label>Monthly limit</label><input name="limit" type="number" step=".01" min="0" value="${x.limit}" required></div><div class="field full"><button class="primary">Save budget</button></div>`);
+}
+function openGoal(id=null){
+ editing=id;let x=id?s.goals.find(a=>a.id===id):{name:"",target:"",current:0};
+ openModal(id?"Edit goal":"Add goal",`<div class="field"><label>Goal</label><input name="name" value="${esc(x.name)}" required></div><div class="field"><label>Target</label><input name="target" type="number" step=".01" min="0" value="${x.target}" required></div><div class="field"><label>Current amount</label><input name="current" type="number" step=".01" min="0" value="${x.current}" required></div><div class="field full"><button class="primary">Save goal</button></div>`);
+}
+document.getElementById("modalForm").addEventListener("submit",e=>{
+ e.preventDefault();let d=Object.fromEntries(new FormData(e.target));
+ if(document.getElementById("modalTitle").textContent.toLowerCase().includes("transaction")){
+  d.amount=+d.amount;if(editing)s.transactions=s.transactions.map(x=>x.id===editing?{...x,...d}:x);else s.transactions.push({id:Date.now(),...d});
+ }else if(document.getElementById("modalTitle").textContent.toLowerCase().includes("bill")){
+  d.amount=+d.amount;d.due=+d.due;if(editing)s.bills=s.bills.map(x=>x.id===editing?{...x,...d}:x);else s.bills.push({id:Date.now(),...d});
+ }else if(document.getElementById("modalTitle").textContent.toLowerCase().includes("budget")){
+  d.limit=+d.limit;if(editing)s.budgets=s.budgets.map(x=>x.id===editing?{...x,...d}:x);else s.budgets.push({id:Date.now(),...d});
+ }else{
+  d.target=+d.target;d.current=+d.current;if(editing)s.goals=s.goals.map(x=>x.id===editing?{...x,...d}:x);else s.goals.push({id:Date.now(),...d});
+ }
+ closeModal();save();
+});
+function remove(type,id){if(confirm("Delete this item?")){s[type]=s[type].filter(x=>x.id!==id);save()}}
 function render(){
- document.getElementById('monthLabel').textContent=viewDate.toLocaleString('en-US',{month:'long',year:'numeric'});
- const ts=state.transactions.filter(inMonth), income=ts.filter(x=>x.type==='income').reduce((a,x)=>a+x.amount,0), expenses=ts.filter(x=>x.type==='expense').reduce((a,x)=>a+x.amount,0), saved=ts.filter(x=>x.type==='saving').reduce((a,x)=>a+x.amount,0);
- document.getElementById('income').textContent=money(income);document.getElementById('expenses').textContent=money(expenses);document.getElementById('saved').textContent=money(saved);document.getElementById('left').textContent=money(income-expenses-saved);
- document.getElementById('recent').innerHTML=ts.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6).map(t=>`<div class="row space" style="padding:9px 0;border-bottom:1px solid var(--line)"><span><b>${esc(t.description)}</b><br><span class="small">${esc(t.category)} · ${t.date}</span></span><b class="${t.type==='expense'?'bad':'good'}">${t.type==='expense'?'-':'+'}${money(t.amount)}</b></div>`).join('')||'<div class="empty">No transactions this month.</div>';
- const cats={};ts.filter(x=>x.type==='expense').forEach(x=>cats[x.category]=(cats[x.category]||0)+x.amount);let max=Math.max(1,...Object.values(cats));
- document.getElementById('categories').innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`<div class="category"><span>${esc(c)}</span><b>${money(v)}</b></div><div class="progress"><div class="bar" style="width:${v/max*100}%"></div></div>`).join('')||'<div class="empty">No spending yet.</div>';
- document.getElementById('transactionTable').innerHTML=`<table><thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Type</th><th>Amount</th><th></th></tr></thead><tbody>${state.transactions.filter(inMonth).sort((a,b)=>b.date.localeCompare(a.date)).map(t=>`<tr><td>${t.date}</td><td>${esc(t.description)}</td><td>${esc(t.category)}</td><td>${t.type}</td><td>${money(t.amount)}</td><td><button class="danger" onclick="del('transactions',${t.id})">Delete</button></td></tr>`).join('')}</tbody></table>`;
- document.getElementById('billTable').innerHTML=state.bills.map(b=>`<div class="row space" style="padding:13px 0;border-bottom:1px solid var(--line)"><span><b>${esc(b.name)}</b><br><span class="small">${esc(b.category)} · due day ${b.due}</span></span><span><b>${money(b.amount)}</b> <button class="danger" onclick="del('bills',${b.id})">Delete</button></span></div>`).join('')||'<div class="empty">No bills yet.</div>';
- const spend=cats;
- document.getElementById('budgetList').innerHTML=state.budgets.map(b=>{let used=spend[b.category]||0,pct=Math.min(100,used/b.limit*100);return `<div style="padding:12px 0;border-bottom:1px solid var(--line)"><div class="row space"><b>${esc(b.category)}</b><span>${money(used)} / ${money(b.limit)}</span></div><div class="progress"><div class="bar" style="width:${pct}%"></div></div><div class="row space small" style="margin-top:6px"><span>${Math.round(pct)}% used</span><button class="danger" onclick="del('budgets',${b.id||0})">Delete</button></div></div>`}).join('')||'<div class="empty">No budget categories yet.</div>';
- document.getElementById('goalList').innerHTML=state.goals.map(g=>{let pct=Math.min(100,g.current/g.target*100);return `<div style="padding:14px 0;border-bottom:1px solid var(--line)"><div class="row space"><b>${esc(g.name)}</b><span>${money(g.current)} / ${money(g.target)}</span></div><div class="progress"><div class="bar" style="width:${pct}%"></div></div><div class="small" style="margin-top:7px">${Math.round(pct)}% complete <button class="danger" onclick="del('goals',${g.id})">Delete</button></div></div>`}).join('')||'<div class="empty">No goals yet.</div>';
+ let ts=s.transactions.filter(x=>x.date.startsWith(month())), inc=ts.filter(x=>x.type==="income").reduce((a,x)=>a+x.amount,0), exp=ts.filter(x=>x.type==="expense").reduce((a,x)=>a+x.amount,0), sav=ts.filter(x=>x.type==="saving").reduce((a,x)=>a+x.amount,0);
+ dIncome.textContent=money(inc);dExpenses.textContent=money(exp);dSaving.textContent=money(sav);dAvailable.textContent=money(inc-exp-sav);
+ summary.innerHTML=`<div class="row between"><span>Income</span><b class="green">${money(inc)}</b></div><div class="row between" style="margin-top:10px"><span>Expenses</span><b class="red">${money(exp)}</b></div><div class="row between" style="margin-top:10px"><span>Savings / investing</span><b>${money(sav)}</b></div><hr style="border:0;border-top:1px solid var(--line);margin:14px 0"><div class="row between"><b>Available</b><b>${money(inc-exp-sav)}</b></div>`;
+ upcoming.innerHTML=s.bills.slice().sort((a,b)=>a.due-b.due).map(b=>`<div class="row between" style="padding:9px 0;border-bottom:1px solid var(--line)"><span><b>${esc(b.name)}</b><br><span class="small">Due ${b.due} · ${esc(b.category)}</span></span><b>${money(b.amount)}</b></div>`).join("")||'<div class="empty">No recurring bills.</div>';
+ tx.innerHTML=table(s.transactions.filter(x=>x.date.startsWith(month())),["date","description","category","type","amount"],"transactions");
+ billList.innerHTML=table(s.bills,["name","category","due","amount"],"bills");
+ let spent={};ts.filter(x=>x.type==="expense").forEach(x=>spent[x.category]=(spent[x.category]||0)+x.amount);
+ budgetList.innerHTML=s.budgets.map(b=>{let u=spent[b.category]||0,p=b.limit?Math.min(100,u/b.limit*100):0;return `<div style="padding:13px 0;border-bottom:1px solid var(--line)"><div class="row between"><b>${esc(b.category)}</b><span>${money(u)} / ${money(b.limit)}</span></div><div class="progress" style="margin:8px 0"><div class="bar" style="width:${p}%"></div></div><div class="row between small"><span>${Math.round(p)}% used</span><span><button class="edit" onclick="openBudget(${b.id})">Edit</button> <button class="danger" onclick="remove('budgets',${b.id})">Delete</button></span></div></div>`}).join("")||'<div class="empty">No budget categories.</div>';
+ goalList.innerHTML=s.goals.map(g=>{let p=g.target?Math.min(100,g.current/g.target*100):0;return `<div style="padding:13px 0;border-bottom:1px solid var(--line)"><div class="row between"><b>${esc(g.name)}</b><span>${money(g.current)} / ${money(g.target)}</span></div><div class="progress" style="margin:8px 0"><div class="bar" style="width:${p}%"></div></div><div class="row between small"><span>${Math.round(p)}% complete</span><span><button class="edit" onclick="openGoal(${g.id})">Edit</button> <button class="danger" onclick="remove('goals',${g.id})">Delete</button></span></div></div>`}).join("")||'<div class="empty">No goals.</div>';
+ settingsForm.savingTarget.value=s.settings.savingTarget;settingsForm.emergencyTarget.value=s.settings.emergencyTarget;
 }
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function del(type,id){state[type]=state[type].filter(x=>x.id!==id);save()}
-function closeModal(){document.getElementById('modal').classList.remove('show')}
-function openModal(type){
- modalType=type;let f=document.getElementById('modalForm'), title='';
- if(type==='transaction'){title='Add transaction';f.innerHTML=`<div class="field"><label>Date</label><input name="date" type="date" value="${monthKey()}-14" required></div><div class="field"><label>Type</label><select name="type"><option value="expense">Expense</option><option value="income">Income</option><option value="saving">Saving / Investing</option></select></div><div class="field"><label>Description</label><input name="description" required></div><div class="field"><label>Category</label><input name="category" placeholder="Groceries" required></div><div class="field"><label>Amount</label><input name="amount" type="number" step="0.01" min="0" required></div><div class="field full"><button class="primary">Save transaction</button></div>`}
- if(type==='bill'){title='Add recurring bill';f.innerHTML=`<div class="field"><label>Bill name</label><input name="name" required></div><div class="field"><label>Amount</label><input name="amount" type="number" step="0.01" min="0" required></div><div class="field"><label>Due day</label><input name="due" type="number" min="1" max="31" required></div><div class="field"><label>Category</label><input name="category" required></div><div class="field full"><button class="primary">Save bill</button></div>`}
- if(type==='budget'){title='Set budget category';f.innerHTML=`<div class="field"><label>Category</label><input name="category" required></div><div class="field"><label>Monthly limit</label><input name="limit" type="number" step="0.01" min="0" required></div><div class="field full"><button class="primary">Save budget</button></div>`}
- if(type==='goal'){title='Add savings goal';f.innerHTML=`<div class="field"><label>Goal name</label><input name="name" required></div><div class="field"><label>Target</label><input name="target" type="number" step="0.01" min="0" required></div><div class="field"><label>Current amount</label><input name="current" type="number" step="0.01" min="0" value="0" required></div><div class="field full"><button class="primary">Save goal</button></div>`}
- document.getElementById('modalTitle').textContent=title;document.getElementById('modal').classList.add('show');
+function table(arr,cols,type){
+ if(!arr.length)return '<div class="empty">Nothing here yet. Tap + Add to create your first item.</div>';
+ let rows=arr.slice().sort((a,b)=>String(b.date||b.due||"").localeCompare(String(a.date||a.due||""))).map(x=>`<tr>${cols.map(c=>`<td>${c==="amount"||c==="limit"?money(x[c]):c==="due"?"Day "+x[c]:esc(x[c])}</td>`).join("")}<td><button class="edit" onclick="${type==="transactions"?"openTransaction":type==="bills"?"openBill":"openBudget"}(${x.id})">Edit</button> <button class="danger" onclick="remove('${type}',${x.id})">Delete</button></td></tr>`).join("");
+ return `<div style="overflow:auto"><table><thead><tr>${cols.map(c=>`<th>${c[0].toUpperCase()+c.slice(1)}</th>`).join("")}<th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
-document.getElementById('modalForm').addEventListener('submit',e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));if(modalType==='transaction')state.transactions.push({id:Date.now(),...d,amount:+d.amount});if(modalType==='bill')state.bills.push({id:Date.now(),...d,amount:+d.amount,due:+d.due});if(modalType==='budget')state.budgets.push({id:Date.now(),category:d.category,limit:+d.limit});if(modalType==='goal')state.goals.push({id:Date.now(),...d,target:+d.target,current:+d.current});closeModal();save()});
-document.querySelectorAll('.tab').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('main section').forEach(x=>x.hidden=x.id!==btn.dataset.tab)});
+settingsForm.addEventListener("submit",e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));s.settings={savingTarget:+d.savingTarget,emergencyTarget:+d.emergencyTarget};save();alert("Setup saved.")});
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll("main section").forEach(x=>x.hidden=x.id!==b.dataset.page)});
+function backup(){let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:"application/json"}));a.download="my-budget-backup.json";a.click()}
+function restore(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{s=JSON.parse(r.result);save();alert("Backup imported.")}catch{alert("That file is not a valid budget backup.")}};r.readAsText(f)}
+function resetData(){if(confirm("This deletes all budget data on this browser. Continue?")){s=JSON.parse(JSON.stringify(fresh));save()}}
 render();
 </script>
 </body>
