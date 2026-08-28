@@ -77,7 +77,6 @@ async function connectPlaid(){
  }catch(e){s.textContent=e.message}
 }
 async function loadPlaid(){
- if(!localStorage.getItem(PLAID_API_KEY))return;
  try{let [a,t]=await Promise.all([plaidFetch("/api/accounts"),plaidFetch("/api/transactions?limit=100")]);
   $("plaidAccounts").innerHTML=a.accounts.map(x=>`<div class="item row between"><span><b>${esc(x.name)}</b><br><span class="small">${esc(x.institution_name)} · ${esc(x.subtype||x.type||"")}</span></span><span><b>${money(x.current_balance)}</b><br><span class="small">${x.available_balance==null?"":"Available "+money(x.available_balance)}</span></span></div>`).join("")||'<div class="empty">No linked accounts yet.</div>';
   $("plaidTransactions").innerHTML=t.transactions.map(x=>`<div class="item row between"><span><b>${esc(x.merchant_name||x.name)}</b><br><span class="small">${esc(x.date)} · ${esc(x.category||"Other")}${x.pending?" · Pending":""}</span></span><b class="${x.amount>0?"red":"green"}">${x.amount>0?"-":"+"}${money(Math.abs(x.amount))}</b></div>`).join("")||'<div class="empty">No linked transactions yet.</div>';
