@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "my-budget-plaid",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-28",
+  "workers_dev": true,
+  "preview_urls": false,
+  "vars": {
+    "PLAID_ENV": "sandbox",
+    "ALLOWED_ORIGIN": "https://jnt39126-coder.github.io"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "my-budget-plaid",
+      "database_id": "715d7e7d-e69f-4ebf-8adf-7a0288059606"
+    }
+  ]
+}

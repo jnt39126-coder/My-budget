@@ -1,0 +1,14 @@
+{
+  "name": "my-budget-plaid-backend",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:local": "wrangler d1 execute my-budget-plaid --local --file=./schema.sql",
+    "db:remote": "wrangler d1 execute my-budget-plaid --remote --file=./schema.sql"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
+
