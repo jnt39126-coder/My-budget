@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "my-budget-plaid",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-28",
+  "workers_dev": true,
+  "preview_urls": false,
+  "triggers": {
+    "crons": ["0 */6 * * *"]
+  },
+  "vars": {
+    "PLAID_ENV": "production",
+    "ALLOWED_ORIGIN": "https://jnt39126-coder.github.io",
+    "PLAID_REDIRECT_URI": "https://jnt39126-coder.github.io/My-budget/oauth.html"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "my-budget-plaid-production",
+      "database_id": "e5605a96-fd2d-44d2-b4f4-8f7021e9a6c3"
+    }
+  ]
+}
