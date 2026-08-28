@@ -22,7 +22,7 @@
 <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 <script>
 const K="my-budget-v3",blank={accounts:[],transactions:[],bills:[],budgets:[],goals:[],investments:[],retirement:[],holdings:[]};let d=JSON.parse(localStorage.getItem(K)||"null")||blank,edit=null,type=null;
-const PLAID_API_KEY="my-budget-plaid-api",PLAID_PASSWORD_KEY="my-budget-plaid-password",PLAID_API_DEFAULT="https://my-budget-plaid.james-my-budget.workers.dev";
+const PLAID_API_KEY="my-budget-plaid-api",PLAID_PASSWORD_KEY="my-budget-plaid-password",PLAID_LINK_TOKEN_KEY="my-budget-plaid-link-token",PLAID_LINK_KIND_KEY="my-budget-plaid-link-kind",PLAID_API_DEFAULT="https://my-budget-plaid.james-my-budget.workers.dev";
 let plaidAccountData=[],plaidTransactionData=[],plaidInvestmentData={accounts:[],holdings:[]};
 const $=id=>document.getElementById(id), money=n=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(+n||0), today=()=>new Date().toISOString().slice(0,10), month=()=>today().slice(0,7), esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function save(){localStorage.setItem(K,JSON.stringify(d));render();renderPlaidSummary()}function sum(a,t){return a.filter(x=>x.type==t).reduce((n,x)=>n+x.amount,0)}function closeM(){$("modal").classList.remove("show");edit=null;type=null}
@@ -74,7 +74,8 @@ async function plaidFetch(path,options={}){
 async function connectPlaid(kind="banking"){
  let s=kind==="investments"?$("plaidInvestmentStatus"):$("plaidStatus");
  try{s.textContent="Preparing secure connection…";let data=await plaidFetch("/api/link-token",{method:"POST",body:JSON.stringify({kind})});
-  let handler=Plaid.create({token:data.link_token,onSuccess:async(public_token,metadata)=>{try{s.textContent="Saving linked account…";await plaidFetch("/api/exchange",{method:"POST",body:JSON.stringify({public_token,institution_name:metadata.institution?.name||"Linked institution"})});s.textContent="Account linked.";await loadPlaid()}catch(e){s.textContent=e.message}},onExit:error=>{s.textContent=error?error.display_message||error.error_message||"Plaid Link closed with an error.":"Connection canceled."}});handler.open();
+  localStorage.setItem(PLAID_LINK_TOKEN_KEY,data.link_token);localStorage.setItem(PLAID_LINK_KIND_KEY,kind);
+  let handler=Plaid.create({token:data.link_token,onSuccess:async(public_token,metadata)=>{try{s.textContent="Saving linked account…";await plaidFetch("/api/exchange",{method:"POST",body:JSON.stringify({public_token,institution_name:metadata.institution?.name||"Linked institution"})});localStorage.removeItem(PLAID_LINK_TOKEN_KEY);localStorage.removeItem(PLAID_LINK_KIND_KEY);s.textContent="Account linked.";await loadPlaid()}catch(e){s.textContent=e.message}},onExit:error=>{if(!error){localStorage.removeItem(PLAID_LINK_TOKEN_KEY);localStorage.removeItem(PLAID_LINK_KIND_KEY)}s.textContent=error?error.display_message||error.error_message||"Plaid Link closed with an error.":"Connection canceled."}});handler.open();
  }catch(e){s.textContent=e.message}
 }
 async function loadPlaid(){

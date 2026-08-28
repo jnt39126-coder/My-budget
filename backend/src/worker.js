@@ -30,6 +30,7 @@ export default {
           language: "en",
           country_codes: ["US"],
           products,
+          redirect_uri: env.PLAID_REDIRECT_URI,
           user: { client_user_id: "personal-budget-owner" },
         });
         return json({ link_token: data.link_token }, 200, headers);

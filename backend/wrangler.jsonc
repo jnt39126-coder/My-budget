@@ -7,7 +7,8 @@
   "preview_urls": false,
   "vars": {
     "PLAID_ENV": "sandbox",
-    "ALLOWED_ORIGIN": "https://jnt39126-coder.github.io"
+    "ALLOWED_ORIGIN": "https://jnt39126-coder.github.io",
+    "PLAID_REDIRECT_URI": "https://jnt39126-coder.github.io/My-budget/oauth.html"
   },
   "d1_databases": [
     {

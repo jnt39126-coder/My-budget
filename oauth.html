@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Returning to My Budget</title>
+  <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+  <style>
+    body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f4f7ff;color:#182037;font:16px system-ui,-apple-system,sans-serif}
+    main{max-width:34rem;margin:1rem;padding:2rem;border-radius:1rem;background:white;box-shadow:0 8px 30px #1d3d7d18;text-align:center}
+    h1{margin-top:0}p{color:#65708a;line-height:1.5}a{color:#315efb}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Returning to My Budget…</h1>
+  <p id="status">Finishing the secure connection with Plaid.</p>
+  <p><a href="./">Return to My Budget</a></p>
+</main>
+<script>
+const TOKEN_KEY="my-budget-plaid-link-token",KIND_KEY="my-budget-plaid-link-kind",PASSWORD_KEY="my-budget-plaid-password",API_KEY="my-budget-plaid-api",API_DEFAULT="https://my-budget-plaid.james-my-budget.workers.dev";
+const status=document.getElementById("status");
+function finish(message){status.textContent=message;setTimeout(()=>location.replace("./"),1200)}
+async function exchange(publicToken,metadata){
+ let password=sessionStorage.getItem(PASSWORD_KEY)||prompt("Enter your personal My Budget app password:","")||"";
+ if(!password)throw new Error("Your personal app password is required to finish linking.");
+ sessionStorage.setItem(PASSWORD_KEY,password);
+ let api=(localStorage.getItem(API_KEY)||API_DEFAULT).replace(/\/$/,"");
+ let response=await fetch(api+"/api/exchange",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+password},body:JSON.stringify({public_token:publicToken,institution_name:metadata.institution?.name||"Linked institution"})});
+ let data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||"The linked account could not be saved.");
+ localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(KIND_KEY);finish("Account linked. Returning to My Budget…");
+}
+let token=localStorage.getItem(TOKEN_KEY);
+if(!token){status.textContent="This Plaid session expired. Return to My Budget and start linking again."}
+else{
+ let handler=Plaid.create({token,receivedRedirectUri:location.href,onSuccess:(publicToken,metadata)=>exchange(publicToken,metadata).catch(error=>status.textContent=error.message),onExit:error=>{status.textContent=error?error.display_message||error.error_message||"Plaid Link closed with an error.":"Connection canceled. You can return to My Budget."}});
+ handler.open();
+}
+</script>
+</body>
+</html>
