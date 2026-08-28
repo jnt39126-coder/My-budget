@@ -23,11 +23,13 @@ export default {
     try {
       const url = new URL(request.url);
       if (request.method === "POST" && url.pathname === "/api/link-token") {
+        const requestBody = await request.json().catch(() => ({}));
+        const products = requestBody.kind === "investments" ? ["investments"] : ["transactions"];
         const data = await plaid(env, "/link/token/create", {
           client_name: "My Budget",
           language: "en",
           country_codes: ["US"],
-          products: ["transactions"],
+          products,
           user: { client_user_id: "personal-budget-owner" },
         });
         return json({ link_token: data.link_token }, 200, headers);
@@ -44,7 +46,10 @@ export default {
            ON CONFLICT(item_id) DO UPDATE SET access_token=excluded.access_token,
            institution_name=excluded.institution_name, updated_at=CURRENT_TIMESTAMP`
         ).bind(exchanged.item_id, protectedToken, institution_name).run();
-        await refreshAccounts(env, exchanged.item_id, exchanged.access_token);
+        const accounts = await refreshAccounts(env, exchanged.item_id, exchanged.access_token);
+        if (accounts.some(account => account.type === "investment")) {
+          await refreshInvestments(env, exchanged.access_token);
+        }
         return json({ ok: true, item_id: exchanged.item_id }, 200, headers);
       }
 
@@ -77,6 +82,25 @@ export default {
         return json({ transactions: result.results }, 200, headers);
       }
 
+      if (request.method === "GET" && url.pathname === "/api/investments") {
+        const accounts = await env.DB.prepare(
+          `SELECT account_id, name, official_name, subtype, current_balance, institution_name
+           FROM plaid_accounts a JOIN plaid_items i ON i.item_id=a.item_id
+           WHERE a.type='investment' ORDER BY institution_name, name`
+        ).all();
+        const holdings = await env.DB.prepare(
+          `SELECT h.account_id, a.name AS account_name, i.institution_name,
+                  s.name, s.ticker_symbol, s.type, s.close_price, s.close_price_as_of,
+                  h.quantity, h.cost_basis, h.current_value
+           FROM plaid_holdings h
+           JOIN plaid_accounts a ON a.account_id=h.account_id
+           JOIN plaid_items i ON i.item_id=a.item_id
+           JOIN plaid_securities s ON s.security_id=h.security_id
+           ORDER BY h.current_value DESC`
+        ).all();
+        return json({ accounts: accounts.results, holdings: holdings.results }, 200, headers);
+      }
+
       return json({ error: "Not found" }, 404, headers);
     } catch (error) {
       console.error(error);
@@ -104,7 +128,7 @@ async function plaid(env, path, body) {
 }
 
 async function refreshAccounts(env, itemId, accessToken) {
-  const data = await plaid(env, "/accounts/balance/get", { access_token: accessToken });
+  const data = await plaid(env, "/accounts/get", { access_token: accessToken });
   const statements = data.accounts.map(account => env.DB.prepare(
     `INSERT INTO plaid_accounts
       (account_id,item_id,name,official_name,type,subtype,current_balance,available_balance,iso_currency_code)
@@ -117,9 +141,39 @@ async function refreshAccounts(env, itemId, accessToken) {
     account.subtype, account.balances.current, account.balances.available,
     account.balances.iso_currency_code));
   if (statements.length) await env.DB.batch(statements);
+  return data.accounts;
+}
+
+async function refreshInvestments(env, accessToken) {
+  const data = await plaid(env, "/investments/holdings/get", { access_token: accessToken });
+  const securities = data.securities.map(security => env.DB.prepare(
+    `INSERT INTO plaid_securities
+      (security_id,name,ticker_symbol,type,close_price,close_price_as_of,iso_currency_code)
+     VALUES (?,?,?,?,?,?,?)
+     ON CONFLICT(security_id) DO UPDATE SET name=excluded.name, ticker_symbol=excluded.ticker_symbol,
+       type=excluded.type, close_price=excluded.close_price, close_price_as_of=excluded.close_price_as_of,
+       iso_currency_code=excluded.iso_currency_code, updated_at=CURRENT_TIMESTAMP`
+  ).bind(security.security_id, security.name, security.ticker_symbol, security.type,
+    security.close_price, security.close_price_as_of, security.iso_currency_code));
+  if (securities.length) await env.DB.batch(securities);
+  const holdings = data.holdings.map(holding => env.DB.prepare(
+    `INSERT INTO plaid_holdings
+      (account_id,security_id,quantity,cost_basis,current_value,institution_value,institution_price)
+     VALUES (?,?,?,?,?,?,?)
+     ON CONFLICT(account_id,security_id) DO UPDATE SET quantity=excluded.quantity,
+       cost_basis=excluded.cost_basis, current_value=excluded.current_value,
+       institution_value=excluded.institution_value, institution_price=excluded.institution_price,
+       updated_at=CURRENT_TIMESTAMP`
+  ).bind(holding.account_id, holding.security_id, holding.quantity, holding.cost_basis,
+    holding.institution_value, holding.institution_value, holding.institution_price));
+  if (holdings.length) await env.DB.batch(holdings);
 }
 
 async function syncItem(env, item) {
+  const accounts = await refreshAccounts(env, item.item_id, item.access_token);
+  const hasInvestments = accounts.some(account => account.type === "investment");
+  if (hasInvestments) await refreshInvestments(env, item.access_token);
+  if (accounts.every(account => account.type === "investment")) return;
   let cursor = item.cursor || null;
   let more = true;
   while (more) {
@@ -146,7 +200,6 @@ async function syncItem(env, item) {
   }
   await env.DB.prepare("UPDATE plaid_items SET cursor=?, updated_at=CURRENT_TIMESTAMP WHERE item_id=?")
     .bind(cursor, item.item_id).run();
-  await refreshAccounts(env, item.item_id, item.access_token);
 }
 
 function originAllowed(origin, allowed) {

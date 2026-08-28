@@ -37,3 +37,29 @@ CREATE TABLE IF NOT EXISTS plaid_transactions (
 
 CREATE INDEX IF NOT EXISTS idx_transactions_date ON plaid_transactions(date DESC);
 
+CREATE TABLE IF NOT EXISTS plaid_securities (
+  security_id TEXT PRIMARY KEY,
+  name TEXT,
+  ticker_symbol TEXT,
+  type TEXT,
+  close_price REAL,
+  close_price_as_of TEXT,
+  iso_currency_code TEXT,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS plaid_holdings (
+  account_id TEXT NOT NULL,
+  security_id TEXT NOT NULL,
+  quantity REAL,
+  cost_basis REAL,
+  current_value REAL,
+  institution_value REAL,
+  institution_price REAL,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (account_id, security_id),
+  FOREIGN KEY (account_id) REFERENCES plaid_accounts(account_id) ON DELETE CASCADE,
+  FOREIGN KEY (security_id) REFERENCES plaid_securities(security_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_holdings_account ON plaid_holdings(account_id);
