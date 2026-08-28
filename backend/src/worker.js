@@ -63,9 +63,25 @@ export default {
         return json({ ok: true }, 200, headers);
       }
 
+      if (request.method === "POST" && url.pathname === "/api/disconnect") {
+        const { item_id } = await request.json().catch(() => ({}));
+        if (!item_id) return json({ error: "Missing item_id" }, 400, headers);
+        const item = await env.DB.prepare(
+          "SELECT access_token FROM plaid_items WHERE item_id=?"
+        ).bind(item_id).first();
+        if (!item) return json({ error: "Connection not found" }, 404, headers);
+        const accessToken = await unseal(item.access_token, env.TOKEN_ENCRYPTION_KEY);
+        await plaid(env, "/item/remove", { access_token: accessToken });
+        await env.DB.prepare("DELETE FROM plaid_items WHERE item_id=?").bind(item_id).run();
+        await env.DB.prepare(
+          "DELETE FROM plaid_securities WHERE NOT EXISTS (SELECT 1 FROM plaid_holdings h WHERE h.security_id=plaid_securities.security_id)"
+        ).run();
+        return json({ ok: true }, 200, headers);
+      }
+
       if (request.method === "GET" && url.pathname === "/api/accounts") {
         const result = await env.DB.prepare(
-          `SELECT a.account_id, a.name, a.official_name, a.type, a.subtype,
+          `SELECT a.account_id, a.item_id, a.name, a.official_name, a.type, a.subtype,
                   a.current_balance, a.available_balance, a.iso_currency_code,
                   i.institution_name
            FROM plaid_accounts a JOIN plaid_items i ON i.item_id=a.item_id
@@ -85,7 +101,8 @@ export default {
 
       if (request.method === "GET" && url.pathname === "/api/investments") {
         const accounts = await env.DB.prepare(
-          `SELECT account_id, name, official_name, subtype, current_balance, institution_name
+          `SELECT a.account_id, a.item_id, a.name, a.official_name, a.subtype,
+                  a.current_balance, i.institution_name
            FROM plaid_accounts a JOIN plaid_items i ON i.item_id=a.item_id
            WHERE a.type='investment' ORDER BY institution_name, name`
         ).all();
