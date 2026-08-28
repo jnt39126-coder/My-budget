@@ -5,6 +5,9 @@
   "compatibility_date": "2026-08-28",
   "workers_dev": true,
   "preview_urls": false,
+  "triggers": {
+    "crons": ["0 */6 * * *"]
+  },
   "vars": {
     "PLAID_ENV": "sandbox",
     "ALLOWED_ORIGIN": "https://jnt39126-coder.github.io",

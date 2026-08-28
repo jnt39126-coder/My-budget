@@ -55,11 +55,8 @@ export default {
       }
 
       if (request.method === "POST" && url.pathname === "/api/sync") {
-        const items = await env.DB.prepare("SELECT item_id, access_token, cursor FROM plaid_items").all();
-        for (const item of items.results) {
-          item.access_token = await unseal(item.access_token, env.TOKEN_ENCRYPTION_KEY);
-          await syncItem(env, item);
-        }
+        const failures = await syncAllItems(env);
+        if (failures.length) throw new Error(`${failures.length} Plaid connection(s) could not refresh`);
         return json({ ok: true }, 200, headers);
       }
 
@@ -124,6 +121,11 @@ export default {
       console.error(error);
       return json({ error: error.message || "Backend error" }, 500, headers);
     }
+  },
+  async scheduled(_controller, env, ctx) {
+    ctx.waitUntil(syncAllItems(env).then(failures => {
+      if (failures.length) console.error("Scheduled Plaid refresh failures", failures);
+    }));
   },
 };
 
@@ -218,6 +220,21 @@ async function syncItem(env, item) {
   }
   await env.DB.prepare("UPDATE plaid_items SET cursor=?, updated_at=CURRENT_TIMESTAMP WHERE item_id=?")
     .bind(cursor, item.item_id).run();
+}
+
+async function syncAllItems(env) {
+  const items = await env.DB.prepare("SELECT item_id, access_token, cursor FROM plaid_items").all();
+  const failures = [];
+  for (const item of items.results) {
+    try {
+      item.access_token = await unseal(item.access_token, env.TOKEN_ENCRYPTION_KEY);
+      await syncItem(env, item);
+    } catch (error) {
+      console.error("Plaid refresh failed", item.item_id, error);
+      failures.push({ item_id: item.item_id, error: error.message || "Refresh failed" });
+    }
+  }
+  return failures;
 }
 
 function originAllowed(origin, allowed) {
