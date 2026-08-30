@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS plaid_accounts (
   subtype TEXT,
   current_balance REAL,
   available_balance REAL,
+  credit_limit REAL,
   iso_currency_code TEXT,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (item_id) REFERENCES plaid_items(item_id) ON DELETE CASCADE

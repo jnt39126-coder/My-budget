@@ -79,7 +79,8 @@ export default {
       if (request.method === "GET" && url.pathname === "/api/accounts") {
         const result = await env.DB.prepare(
           `SELECT a.account_id, a.item_id, a.name, a.official_name, a.type, a.subtype,
-                  a.current_balance, a.available_balance, a.iso_currency_code,
+                  a.current_balance, a.available_balance, a.credit_limit,
+                  a.iso_currency_code,
                   i.institution_name
            FROM plaid_accounts a JOIN plaid_items i ON i.item_id=a.item_id
            ORDER BY i.institution_name, a.name`
@@ -151,14 +152,15 @@ async function refreshAccounts(env, itemId, accessToken) {
   const data = await plaid(env, "/accounts/get", { access_token: accessToken });
   const statements = data.accounts.map(account => env.DB.prepare(
     `INSERT INTO plaid_accounts
-      (account_id,item_id,name,official_name,type,subtype,current_balance,available_balance,iso_currency_code)
-     VALUES (?,?,?,?,?,?,?,?,?)
+      (account_id,item_id,name,official_name,type,subtype,current_balance,available_balance,credit_limit,iso_currency_code)
+     VALUES (?,?,?,?,?,?,?,?,?,?)
      ON CONFLICT(account_id) DO UPDATE SET name=excluded.name, official_name=excluded.official_name,
        type=excluded.type, subtype=excluded.subtype, current_balance=excluded.current_balance,
-       available_balance=excluded.available_balance, iso_currency_code=excluded.iso_currency_code,
+       available_balance=excluded.available_balance, credit_limit=excluded.credit_limit,
+       iso_currency_code=excluded.iso_currency_code,
        updated_at=CURRENT_TIMESTAMP`
   ).bind(account.account_id, itemId, account.name, account.official_name, account.type,
-    account.subtype, account.balances.current, account.balances.available,
+    account.subtype, account.balances.current, account.balances.available, account.balances.limit,
     account.balances.iso_currency_code));
   if (statements.length) await env.DB.batch(statements);
   return data.accounts;
