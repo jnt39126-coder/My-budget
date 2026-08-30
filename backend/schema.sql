@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS plaid_transactions (
   amount REAL NOT NULL,
   date TEXT NOT NULL,
   category TEXT,
+  category_detail TEXT,
   pending INTEGER NOT NULL DEFAULT 0,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (item_id) REFERENCES plaid_items(item_id) ON DELETE CASCADE

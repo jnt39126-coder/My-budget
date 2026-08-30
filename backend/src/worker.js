@@ -25,14 +25,16 @@ export default {
       if (request.method === "POST" && url.pathname === "/api/link-token") {
         const requestBody = await request.json().catch(() => ({}));
         const products = requestBody.kind === "investments" ? ["investments"] : ["transactions"];
-        const data = await plaid(env, "/link/token/create", {
+        const linkOptions = {
           client_name: "My Budget",
           language: "en",
           country_codes: ["US"],
           products,
           redirect_uri: env.PLAID_REDIRECT_URI,
           user: { client_user_id: "personal-budget-owner" },
-        });
+        };
+        if (products.includes("transactions")) linkOptions.transactions = { days_requested: 180 };
+        const data = await plaid(env, "/link/token/create", linkOptions);
         return json({ link_token: data.link_token }, 200, headers);
       }
 
@@ -91,7 +93,8 @@ export default {
       if (request.method === "GET" && url.pathname === "/api/transactions") {
         const limit = Math.min(Math.max(Number(url.searchParams.get("limit")) || 100, 1), 500);
         const result = await env.DB.prepare(
-          `SELECT transaction_id, account_id, name, merchant_name, amount, date, category, pending
+          `SELECT transaction_id, account_id, name, merchant_name, amount, date,
+                  category, category_detail, pending
            FROM plaid_transactions ORDER BY date DESC LIMIT ?`
         ).bind(limit).all();
         return json({ transactions: result.results }, 200, headers);
@@ -206,13 +209,15 @@ async function syncItem(env, item) {
     });
     const upserts = [...data.added, ...data.modified].map(tx => env.DB.prepare(
       `INSERT INTO plaid_transactions
-        (transaction_id,item_id,account_id,name,merchant_name,amount,date,category,pending)
-       VALUES (?,?,?,?,?,?,?,?,?)
+        (transaction_id,item_id,account_id,name,merchant_name,amount,date,category,category_detail,pending)
+       VALUES (?,?,?,?,?,?,?,?,?,?)
        ON CONFLICT(transaction_id) DO UPDATE SET name=excluded.name, merchant_name=excluded.merchant_name,
          amount=excluded.amount, date=excluded.date, category=excluded.category,
+         category_detail=excluded.category_detail,
          pending=excluded.pending, updated_at=CURRENT_TIMESTAMP`
     ).bind(tx.transaction_id, item.item_id, tx.account_id, tx.name, tx.merchant_name,
-      tx.amount, tx.date, tx.personal_finance_category?.primary || "Other", tx.pending ? 1 : 0));
+      tx.amount, tx.date, tx.personal_finance_category?.primary || "Other",
+      tx.personal_finance_category?.detailed || null, tx.pending ? 1 : 0));
     const removals = data.removed.map(tx => env.DB.prepare(
       "DELETE FROM plaid_transactions WHERE transaction_id=?"
     ).bind(tx.transaction_id));
