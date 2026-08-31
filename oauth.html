@@ -21,19 +21,21 @@
 const TOKEN_KEY="my-budget-plaid-link-token",KIND_KEY="my-budget-plaid-link-kind",PASSWORD_KEY="my-budget-plaid-password",API_KEY="my-budget-plaid-api",API_DEFAULT="https://my-budget-plaid.james-my-budget.workers.dev";
 const status=document.getElementById("status");
 function finish(message){status.textContent=message;setTimeout(()=>location.replace("./"),1200)}
-async function exchange(publicToken,metadata){
+async function complete(publicToken,metadata){
  let password=sessionStorage.getItem(PASSWORD_KEY)||prompt("Enter your personal My Budget app password:","")||"";
  if(!password)throw new Error("Your personal app password is required to finish linking.");
  sessionStorage.setItem(PASSWORD_KEY,password);
  let api=(localStorage.getItem(API_KEY)||API_DEFAULT).replace(/\/$/,"");
- let response=await fetch(api+"/api/exchange",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+password},body:JSON.stringify({public_token:publicToken,institution_name:metadata.institution?.name||"Linked institution"})});
+ let updateMode=(localStorage.getItem(KIND_KEY)||"").startsWith("update:");
+ let path=updateMode?"/api/sync":"/api/exchange",body=updateMode?undefined:JSON.stringify({public_token:publicToken,institution_name:metadata.institution?.name||"Linked institution"});
+ let response=await fetch(api+path,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+password},body});
  let data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||"The linked account could not be saved.");
- localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(KIND_KEY);finish("Account linked. Returning to My Budget…");
+ localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(KIND_KEY);finish(updateMode?"Connection repaired. Returning to My Budget…":"Account linked. Returning to My Budget…");
 }
 let token=localStorage.getItem(TOKEN_KEY);
 if(!token){status.textContent="This Plaid session expired. Return to My Budget and start linking again."}
 else{
- let handler=Plaid.create({token,receivedRedirectUri:location.href,onSuccess:(publicToken,metadata)=>exchange(publicToken,metadata).catch(error=>status.textContent=error.message),onExit:error=>{status.textContent=error?error.display_message||error.error_message||"Plaid Link closed with an error.":"Connection canceled. You can return to My Budget."}});
+ let handler=Plaid.create({token,receivedRedirectUri:location.href,onSuccess:(publicToken,metadata)=>complete(publicToken,metadata).catch(error=>status.textContent=error.message),onExit:error=>{status.textContent=error?error.display_message||error.error_message||"Plaid Link closed with an error.":"Connection canceled. You can return to My Budget."}});
  handler.open();
 }
 </script>

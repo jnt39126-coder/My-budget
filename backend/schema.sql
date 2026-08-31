@@ -3,7 +3,19 @@ CREATE TABLE IF NOT EXISTS plaid_items (
   access_token TEXT NOT NULL,
   institution_name TEXT,
   cursor TEXT,
+  last_sync_attempt TEXT,
+  last_successful_sync TEXT,
+  last_error_code TEXT,
+  last_error_message TEXT,
+  consent_expiration_time TEXT,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS app_state (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  state_json TEXT NOT NULL,
+  revision INTEGER NOT NULL DEFAULT 1,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

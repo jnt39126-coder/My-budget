@@ -4,11 +4,12 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
+    "deploy:production": "wrangler deploy --config wrangler.production.jsonc",
     "db:local": "wrangler d1 execute my-budget-plaid --local --file=./schema.sql",
-    "db:remote": "wrangler d1 execute my-budget-plaid --remote --file=./schema.sql"
+    "db:remote": "wrangler d1 execute my-budget-plaid --remote --file=./schema.sql",
+    "db:production": "wrangler d1 execute my-budget-plaid-production --remote --config wrangler.production.jsonc --file=./schema.sql"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
   }
 }
-

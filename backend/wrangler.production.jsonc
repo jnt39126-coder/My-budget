@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "my-budget-plaid",
+  "name": "my-budget-plaid-production",
   "main": "src/worker.js",
   "compatibility_date": "2026-08-28",
   "workers_dev": true,
